@@ -1,0 +1,40 @@
+{% extends 'carspanel_base.html' %}
+
+
+{% block content %}
+
+
+
+{% if cars %}
+<form method="post" action="{% url 'store' %}">
+    {% csrf_token %}
+    <input type="hidden" name="form-TOTAL_FORMS" value="{{ len_cars }}">
+    <input type="hidden" name="form-INITIAL_FORMS" value="0">
+    <table>
+    <tr>
+        <th>Бортовой номер</th>
+        <th>Модель</th>
+        <th>Макс. грузоподъёмность</th>
+        <th>Текущий вес</th>
+        <th>Перегруз, %</th>
+        <th>Координаты разгрузки (х у)</th>
+    </tr>
+
+    {% for car in cars %}
+        <input type="hidden" name="form-{{ forloop.counter|add:-1 }}-car" value="{{ car.pk }}">
+    <tr>
+        <td>{{ car.number }}</td>
+        <td>{{ car.model }}</td>
+        <td>{{ car.model.load_capacity }}</td>
+        <td>{{ car.current_load }}</td>
+        <td>{{ car.overload }}%</td>
+        <td><input type="text" name="form-{{ forloop.counter|add:-1 }}-coords" value="{{ car.coords }}"></td>
+    </tr>
+    {% endfor %}
+
+</table>
+    <input type="submit">
+</form>
+{% endif %}
+
+{% endblock %}

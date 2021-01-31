@@ -1,0 +1,21 @@
+{% extends 'carspanel_base.html' %}
+
+{% block content %}
+
+<table>
+    <tr>
+        <th>Название склада</th>
+        <th>Объём до разгрузки</th>
+        <th>Объём после разгрузки</th>
+        <th>Качественные хар-ки после разгрузки</th>
+    </tr>
+    <tr>
+        <td>{{ store.name }}</td>
+        <td>{{ store.current_volume }}</td>
+        <td>{{ volume_after_unload }}</td>
+        <td>{{ new_store_sio2 }}% SiO2, {{ new_store_fe }}% Fe</td>
+    </tr>
+
+</table>
+
+{% endblock %}

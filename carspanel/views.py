@@ -39,7 +39,8 @@ def calc_store_load(req):
         for row in data:
             point = Point([int(coord) for coord in row['coords'].split(" ")])
 
-            if point.within(poly):
+            #if point.within(poly):
+            if point.intersects(poly):
 
                 cars_ids.append(int(row['car']))
 

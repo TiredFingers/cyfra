@@ -34,28 +34,33 @@ def calc_store_load(req):
         new_store_sio2 = store.sio2
         volume_after_unload = store.current_volume
 
+        cars_ids = list()
+
         for row in data:
             point = Point([int(coord) for coord in row['coords'].split(" ")])
 
             if point.within(poly):
 
-                car = Car.objects.filter(id=int(row['car'])).first()
+                cars_ids.append(int(row['car']))
 
-                if car:
-                    volume_after_unload += car.current_load
-                    car_fe_weight = (car.current_load * car.fe) / 100
-                    car_sio2_weight = (car.current_load * car.sio2) / 100
+        cars = Car.objects.in_bulk(cars_ids)
 
-                    new_store_fe = ((store_fe_weight + car_fe_weight) / volume_after_unload) * 100
-                    new_store_sio2 = ((store_sio2_weight + car_sio2_weight) / volume_after_unload) * 100
+        for car in cars.values():
 
-                    store_fe_weight += car_fe_weight
-                    store_sio2_weight += car_sio2_weight
+            volume_after_unload += car.current_load
+            car_fe_weight = (car.current_load * car.fe) / 100
+            car_sio2_weight = (car.current_load * car.sio2) / 100
+
+            new_store_fe = ((store_fe_weight + car_fe_weight) / volume_after_unload) * 100
+            new_store_sio2 = ((store_sio2_weight + car_sio2_weight) / volume_after_unload) * 100
+
+            store_fe_weight += car_fe_weight
+            store_sio2_weight += car_sio2_weight
 
         return render(req, "carspanel/store.html", {'store': store, 'volume': store.current_volume,
                                                     'volume_after_unload': volume_after_unload,
-                                                    'new_store_fe': new_store_fe,
-                                                    'new_store_sio2': new_store_sio2})
+                                                    'new_store_fe': int(new_store_fe),
+                                                    'new_store_sio2': int(new_store_sio2)})
 
     else:
         return redirect(reverse('index'))
